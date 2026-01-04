@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
+const { t } = useI18n();
 const router = useRouter();
 
 const items = ref([
     {
-        label: 'Dashboard',
+        label: () => t('nav.dashboard'),
         icon: 'pi pi-home',
         route: '/dashboard'
     },
     {
-        label: 'Expenses',
+        label: () => t('nav.expenses'),
         icon: 'pi pi-list',
         route: '/expenses'
     },
     {
-        label: 'Settings',
+        label: () => t('nav.settings'),
         icon: 'pi pi-cog',
         route: '/settings' 
     }
@@ -56,7 +58,7 @@ const items = ref([
                                     : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800'"
                             >
                                 <i :class="item.icon" class="mr-2"></i>
-                                {{ item.label }}
+                                {{ item.label() }}
                             </button>
                         </router-link>
                     </div>
@@ -77,12 +79,12 @@ const items = ref([
         <footer class="border-t border-surface-200 dark:border-surface-700 mt-16 bg-white/50 dark:bg-surface-800/80 backdrop-blur-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="text-center text-sm text-surface-500 dark:text-surface-400">
-                    <p class="mb-2">Follow us</p>
-                    <p>Made with ❤️. I'm willing everyone to know about your recurring expenses</p>
+                    <p class="mb-2">{{ t('footer.followUs') }}</p>
+                    <p>{{ t('footer.madeWith') }}</p>
                     <p class="mt-2">
                         <a href="https://github.com/suriyasonp/recur-app" target="_blank" class="hover:text-primary-200 transition-colors">
                             <i class="pi pi-github mr-1"></i>
-                            View on GitHub
+                            {{ t('footer.viewOnGitHub') }}
                         </a>
                     </p>
                 </div>

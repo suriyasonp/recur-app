@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useExpenseStore } from '../stores/expense';
 import { useSettingsStore } from '../stores/settings';
 import Button from 'primevue/button';
 import { useRouter } from 'vue-router';
 
+const { t } = useI18n();
 const store = useExpenseStore();
 const settings = useSettingsStore();
 const router = useRouter();
@@ -105,10 +107,10 @@ function getYearlyEquivalent(amount: number, frequency: string): number {
         <!-- Hero Section -->
         <div class="text-center mb-12">
             <h1 class="text-5xl font-bold text-surface-400 mb-3">
-                Track Your Recurring Expenses
+                {{ t('dashboard.title') }}
             </h1>
             <p class="text-xl text-surface-600 dark:text-surface-400 mb-8">
-                You're spending <span class="font-bold text-primary-600">{{ settings.currencySymbol }}{{ grandTotal.toLocaleString() }}</span>/year on {{ store.expenses.length }} expenses
+                {{ t('dashboard.spending') }} <span class="font-bold text-primary-600">{{ settings.currencySymbol }}{{ grandTotal.toLocaleString() }}</span>{{ t('dashboard.perYear') }} {{ store.expenses.length }} {{ t('dashboard.expenses') }}
             </p>
             <div class="flex gap-3 justify-center">
                 <!-- <Button 
@@ -119,14 +121,14 @@ function getYearlyEquivalent(amount: number, frequency: string): number {
                     raised
                 /> -->
                 <Button 
-                    label="Quick Add Expense" 
+                    :label="t('dashboard.quickAdd')" 
                     icon="pi pi-bolt" 
                     size="large"
                     raised
                     @click="router.push('/browse')"
                 />
                 <Button 
-                    label="View Expenses" 
+                    :label="t('dashboard.viewExpenses')" 
                     icon="pi pi-list" 
                     size="large"
                     outlined
@@ -192,11 +194,11 @@ function getYearlyEquivalent(amount: number, frequency: string): number {
                 class="md:col-span-2 bg-white dark:bg-surface-800 rounded-[2rem] p-12 flex flex-col items-center justify-center shadow-lg border-2 border-surface-200 dark:border-surface-700"
             >
                 <i class="pi pi-inbox text-6xl text-surface-300 dark:text-surface-600 mb-4"></i>
-                <h3 class="text-xl font-semibold text-surface-900 dark:text-surface-0 mb-2">No expenses yet</h3>
-                <p class="text-surface-500 dark:text-surface-400 mb-6">Start tracking your recurring expenses</p>
+                <h3 class="text-xl font-semibold text-surface-900 dark:text-surface-0 mb-2">{{ t('dashboard.noExpensesYet') }}</h3>
+                <p class="text-surface-500 dark:text-surface-400 mb-6">{{ t('dashboard.startTracking') }}</p>
                 <div class="flex gap-3">
-                    <Button label="Add Expense" icon="pi pi-plus" @click="router.push('/expenses')" />
-                    <Button label="Quick Add Expense" icon="pi pi-bolt" outlined @click="router.push('/browse')" />
+                    <Button :label="t('dashboard.addExpense')" icon="pi pi-plus" @click="router.push('/expenses')" />
+                    <Button :label="t('dashboard.quickAdd')" icon="pi pi-bolt" outlined @click="router.push('/browse')" />
                 </div>
             </div>
         </div>
@@ -207,7 +209,7 @@ function getYearlyEquivalent(amount: number, frequency: string): number {
             class="bg-white dark:bg-surface-800 rounded-[2rem] p-8 flex flex-col md:flex-row justify-between items-center shadow-lg border-2 border-surface-200 dark:border-surface-700 gap-6"
         >
             <div class="flex flex-col items-center md:items-start">
-                <p class="text-surface-400 dark:text-surface-400 text-xs font-bold tracking-widest uppercase mb-1">Total / Month</p>
+                <p class="text-surface-400 dark:text-surface-400 text-xs font-bold tracking-widest uppercase mb-1">{{ t('dashboard.totalMonth') }}</p>
                 <p class="text-4xl font-black text-surface-300 dark:text-surface-0 tracking-tight">
                     {{ settings.currencySymbol }}{{ (totalMonthly + (totalDaily * 30) + (totalYearly / 12)).toLocaleString() }}
                 </p>
@@ -216,7 +218,7 @@ function getYearlyEquivalent(amount: number, frequency: string): number {
             <div class="w-full h-px bg-surface-200 dark:bg-surface-700 md:hidden"></div>
 
             <div class="flex flex-col items-center md:items-end">
-                <p class="text-surface-400 dark:text-surface-400 text-xs font-bold tracking-widest uppercase mb-1">Yearly Projection</p>
+                <p class="text-surface-400 dark:text-surface-400 text-xs font-bold tracking-widest uppercase mb-1">{{ t('dashboard.yearlyProjection') }}</p>
                 <p class="text-3xl font-bold text-primary-600">
                     {{ settings.currencySymbol }}{{ grandTotal.toLocaleString() }}
                 </p>
