@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { subscriptionCatalog, type SubscriptionTemplate } from '../data/subscriptionCatalog';
 import { useExpenseStore } from '../stores/expense';
+import { useSettingsStore } from '../stores/settings';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
@@ -12,7 +14,9 @@ import InputText from 'primevue/inputtext';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 
+const { t } = useI18n();
 const store = useExpenseStore();
+const settings = useSettingsStore();
 const toast = useToast();
 
 const searchQuery = ref('');
@@ -53,12 +57,12 @@ const filteredSubscriptions = computed(() => {
     return filtered;
 });
 
-const frequencyOptions = [
-    { label: 'Monthly', value: 'monthly' },
-    { label: 'Yearly', value: 'yearly' },
-    { label: 'Daily', value: 'daily' },
-    { label: 'One-Time', value: 'one-time' }
-];
+const frequencyOptions = computed(() => [
+    { label: t('frequency.monthly'), value: 'monthly' },
+    { label: t('frequency.yearly'), value: 'yearly' },
+    { label: t('frequency.daily'), value: 'daily' },
+    { label: t('frequency.oneTime'), value: 'one-time' }
+]);
 
 function openQuickAdd(template: SubscriptionTemplate) {
     selectedTemplate.value = template;
@@ -76,8 +80,8 @@ function saveSubscription() {
     if (!formData.value.name || !formData.value.amount) {
         toast.add({ 
             severity: 'error', 
-            summary: 'Error', 
-            detail: 'Please fill in all required fields', 
+            summary: t('common.error'), 
+            detail: t('browse.fillRequired'), 
             life: 3000 
         });
         return;
@@ -93,8 +97,8 @@ function saveSubscription() {
 
     toast.add({ 
         severity: 'success', 
-        summary: 'Success', 
-        detail: `${formData.value.name} added successfully!`, 
+        summary: t('common.success'), 
+        detail: `${formData.value.name} ${t('browse.addedSuccess')}`, 
         life: 3000 
     });
 
@@ -119,10 +123,10 @@ const dateValue = computed({
         <!-- Header -->
         <div class="mb-8">
             <h1 class="text-4xl font-bold text-surface-900 dark:text-surface-0 mb-2">
-                Browse Subscriptions
+                {{ t('browse.title') }}
             </h1>
             <p class="text-lg text-surface-600 dark:text-surface-400">
-                Quick-add popular subscription services with pre-filled information
+                {{ t('browse.subtitle') }}
             </p>
         </div>
 
@@ -135,7 +139,7 @@ const dateValue = computed({
                             <i class="pi pi-search" />
                             <InputText 
                                 v-model="searchQuery" 
-                                placeholder="Search subscriptions..." 
+                                :placeholder="t('browse.searchPlaceholder')" 
                                 class="w-full"
                             />
                         </span>
@@ -144,7 +148,7 @@ const dateValue = computed({
                         <Select 
                             v-model="selectedCategory" 
                             :options="categories" 
-                            placeholder="Filter by category"
+                            :placeholder="t('browse.filterByCategory')"
                             class="w-full"
                         />
                     </div>
@@ -193,9 +197,9 @@ const dateValue = computed({
                 <div class="text-center py-12">
                     <i class="pi pi-search text-6xl text-surface-300 dark:text-surface-600 mb-4"></i>
                     <p class="text-surface-500 dark:text-surface-400 text-lg mb-4">
-                        No subscriptions found matching your search
+                        {{ t('browse.noResults') }}
                     </p>
-                    <Button label="Clear Filters" @click="searchQuery = ''; selectedCategory = 'All'" />
+                    <Button :label="t('browse.clearFilters')" @click="searchQuery = ''; selectedCategory = 'All'" />
                 </div>
             </template>
         </Card>
@@ -204,7 +208,7 @@ const dateValue = computed({
         <Dialog 
             v-model:visible="showDialog" 
             modal 
-            :header="`Add ${selectedTemplate?.name}`"
+            :header="`${t('browse.add')} ${selectedTemplate?.name}`"
             :style="{ width: '90vw', maxWidth: '500px' }"
         >
             <div class="flex flex-col gap-4 py-4" v-if="selectedTemplate">
@@ -216,13 +220,13 @@ const dateValue = computed({
 
                 <!-- Name -->
                 <div class="flex flex-col gap-2">
-                    <label for="name" class="font-semibold text-sm">Subscription Name</label>
+                    <label for="name" class="font-semibold text-sm">{{ t('browse.subscriptionName') }}</label>
                     <InputText id="name" v-model="formData.name" />
                 </div>
 
                 <!-- Amount -->
                 <div class="flex flex-col gap-2">
-                    <label for="amount" class="font-semibold text-sm">Amount</label>
+                    <label for="amount" class="font-semibold text-sm">{{ t('browse.amount') }}</label>
                     <InputNumber 
                         id="amount" 
                         v-model="formData.amount" 
@@ -231,13 +235,13 @@ const dateValue = computed({
                         locale="th-TH"
                     />
                     <small class="text-surface-500">
-                        Default: {{ selectedTemplate.currency === 'THB' ? '฿' : '$' }}{{ selectedTemplate.defaultAmount }}
+                        {{ t('browse.default') }}: {{ settings.currencySymbol }}{{ selectedTemplate.defaultAmount }}
                     </small>
                 </div>
 
                 <!-- Frequency -->
                 <div class="flex flex-col gap-2">
-                    <label for="frequency" class="font-semibold text-sm">Billing Period</label>
+                    <label for="frequency" class="font-semibold text-sm">{{ t('browse.billingPeriod') }}</label>
                     <Select 
                         id="frequency" 
                         v-model="formData.frequency" 
@@ -250,7 +254,7 @@ const dateValue = computed({
 
                 <!-- Due Date -->
                 <div class="flex flex-col gap-2">
-                    <label for="date" class="font-semibold text-sm">Next Payment Date</label>
+                    <label for="date" class="font-semibold text-sm">{{ t('browse.nextPaymentDate') }}</label>
                     <DatePicker 
                         id="date" 
                         v-model="dateValue" 
@@ -262,21 +266,21 @@ const dateValue = computed({
 
                 <!-- Category -->
                 <div class="flex flex-col gap-2">
-                    <label for="category" class="font-semibold text-sm">Category</label>
+                    <label for="category" class="font-semibold text-sm">{{ t('browse.category') }}</label>
                     <InputText id="category" v-model="formData.category" />
                 </div>
 
                 <!-- Actions -->
                 <div class="flex gap-2 pt-4">
                     <Button 
-                        label="Cancel" 
+                        :label="t('common.cancel')" 
                         severity="secondary" 
                         outlined 
                         class="flex-1"
                         @click="showDialog = false" 
                     />
                     <Button 
-                        label="Add Subscription" 
+                        :label="t('browse.addSubscription')" 
                         icon="pi pi-check"
                         class="flex-1"
                         @click="saveSubscription" 

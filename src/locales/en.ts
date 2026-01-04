@@ -15,6 +15,7 @@ export default {
         loading: 'Loading...',
         noData: 'No data available',
         error: 'Error',
+        success: 'Success',
     },
     nav: {
         dashboard: 'Dashboard',
@@ -42,6 +43,7 @@ export default {
         filterByCategory: 'Filter by category',
         noResults: 'No subscriptions found matching your search',
         clearFilters: 'Clear Filters',
+        add: 'Add',
         addSubscription: 'Add Subscription',
         subscriptionName: 'Subscription Name',
         amount: 'Amount',
@@ -49,6 +51,8 @@ export default {
         nextPaymentDate: 'Next Payment Date',
         category: 'Category',
         default: 'Default',
+        fillRequired: 'Please fill in all required fields',
+        addedSuccess: 'added successfully!',
     },
     expenses: {
         title: 'Manage Expenses',
