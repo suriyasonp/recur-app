@@ -1,0 +1,86 @@
+<script setup>
+    import { computed, ref } from 'vue'
+
+    // 1. Data Setup
+    // We store the card data here so it's easy to edit or fetch from an API later.
+    const subscriptions = ref([
+        {
+            id: 1,
+            name: 'Netflix',
+            price: 17.99,
+            yearly: 216,
+            usage: '53%',
+            theme: 'bg-red-50', // Tailwind class for background
+            iconBg: 'bg-black',
+            iconColor: 'text-red-600',
+            iconLetter: 'N'
+        },
+        {
+            id: 2,
+            name: 'Disney+',
+            price: 15.99,
+            yearly: 192,
+            usage: '47%',
+            theme: 'bg-blue-50',
+            iconBg: 'bg-[#003847]', // Custom hex to match Disney+ dark teal
+            iconColor: 'text-white',
+            iconLetter: 'D+'
+        }
+    ])
+
+    // 2. Computed Totals
+    // Automatically calculate totals based on the data above
+    const totalMonthly = computed(() => {
+        return subscriptions.value.reduce((sum, item) => sum + item.price, 0).toFixed(2)
+    })
+
+    const totalYearly = computed(() => {
+        return subscriptions.value.reduce((sum, item) => sum + item.yearly, 0).toFixed(2)
+    })
+</script>
+
+<template>
+    <div class="min-h-screen bg-gray-50 flex items-center justify-center p-6 font-sans">
+
+        <div class="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div v-for="sub in subscriptions" :key="sub.id"
+                :class="[sub.theme, 'rounded-[2rem] p-8 flex flex-col justify-between h-72 transition-transform hover:scale-[1.02] cursor-pointer']">
+                <div class="flex justify-between items-start">
+                    <div :class="[sub.iconBg, 'w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm']">
+                        <span :class="[sub.iconColor, 'font-bold text-xl tracking-tighter']">{{ sub.iconLetter }}</span>
+                    </div>
+                    <span
+                        class="bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-gray-700 shadow-sm">
+                        {{ sub.usage }}
+                    </span>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-gray-800 text-xl mb-1">{{ sub.name }}</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-5xl font-black text-gray-900 tracking-tight">${{ sub.price }}</span>
+                    </div>
+                    <p class="text-gray-500 font-medium text-sm mt-1">~${{ sub.yearly }}/yr</p>
+                </div>
+            </div>
+
+            <div
+                class="md:col-span-2 bg-white rounded-[2rem] p-8 flex flex-col md:flex-row justify-between items-center shadow-sm border border-gray-100 gap-4">
+
+                <div class="flex flex-col items-center md:items-start">
+                    <p class="text-gray-400 text-xs font-bold tracking-widest uppercase mb-1">Total / Month</p>
+                    <p class="text-4xl font-black text-gray-900 tracking-tight">${{ totalMonthly }}</p>
+                </div>
+
+                <div class="w-full h-px bg-gray-100 md:hidden"></div>
+
+                <div class="flex flex-col items-center md:items-end">
+                    <p class="text-gray-400 text-xs font-bold tracking-widest uppercase mb-1">Yearly Projection</p>
+                    <p class="text-2xl font-bold text-indigo-600">${{ totalYearly }}</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</template>

@@ -1,13 +1,44 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useExpenseStore } from '../stores/expense';
+import { useSettingsStore } from '../stores/settings';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import FileUpload from 'primevue/fileupload';
+import Select from 'primevue/select';
 import { useToast } from "primevue/usetoast";
 import Toast from 'primevue/toast';
 
 const store = useExpenseStore();
+const settings = useSettingsStore();
 const toast = useToast();
+
+const currencyOptions = ref([
+    { label: 'Thai Baht (฿)', value: 'THB', symbol: '฿' },
+    { label: 'US Dollar ($)', value: 'USD', symbol: '$' },
+    { label: 'Euro (€)', value: 'EUR', symbol: '€' },
+    { label: 'British Pound (£)', value: 'GBP', symbol: '£' },
+    { label: 'Japanese Yen (¥)', value: 'JPY', symbol: '¥' },
+    { label: 'Chinese Yuan (¥)', value: 'CNY', symbol: '¥' },
+    { label: 'Indian Rupee (₹)', value: 'INR', symbol: '₹' },
+    { label: 'Singapore Dollar (S$)', value: 'SGD', symbol: 'S$' },
+    { label: 'Australian Dollar (A$)', value: 'AUD', symbol: 'A$' },
+    { label: 'Canadian Dollar (C$)', value: 'CAD', symbol: 'C$' },
+]);
+
+const selectedCurrency = ref(currencyOptions.value.find(c => c.value === settings.currency) || currencyOptions.value[0]);
+
+function updateCurrency() {
+    if (!selectedCurrency.value) return;
+    
+    settings.setCurrency(selectedCurrency.value.value, selectedCurrency.value.symbol);
+    toast.add({ 
+        severity: 'success', 
+        summary: 'Updated', 
+        detail: `Currency changed to ${selectedCurrency.value.label}`, 
+        life: 3000 
+    });
+}
 
 function exportData() {
     const data = store.exportData();
@@ -40,7 +71,7 @@ function importData(event: any) {
 
 <template>
     <div class="max-w-4xl">
-        <Card class="shadow-md">
+        <Card class="shadow-md mb-6">
             <template #title>
                 <div class="flex items-center gap-3">
                     <div class="p-3 rounded-lg bg-primary-50 dark:bg-primary-900/20 text-primary-500">
@@ -48,12 +79,54 @@ function importData(event: any) {
                     </div>
                     <div>
                         <h1 class="text-2xl font-bold m-0 text-surface-900 dark:text-surface-0">Settings</h1>
-                        <p class="text-sm text-surface-600 dark:text-surface-400 mt-1">Manage your data and preferences</p>
+                        <p class="text-sm text-surface-600 dark:text-surface-400 mt-1">Manage your preferences and data</p>
                     </div>
                 </div>
             </template>
             <template #content>
                 <div class="space-y-6">
+                    <!-- Currency Settings -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-surface-900 dark:text-surface-0 mb-4 flex items-center gap-2">
+                            <i class="pi pi-money-bill text-primary-500"></i>
+                            Currency Settings
+                        </h3>
+                        
+                        <div class="p-4 border-2 border-surface-200 dark:border-surface-700 rounded-lg">
+                            <div class="flex items-start gap-3">
+                                <div class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600">
+                                    <i class="pi pi-globe text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-surface-900 dark:text-surface-0 mb-1">Display Currency</h4>
+                                    <p class="text-sm text-surface-600 dark:text-surface-400 mb-3">
+                                        Choose the currency symbol to display throughout the app
+                                    </p>
+                                    <div class="flex gap-3 items-end">
+                                        <div class="flex-1">
+                                            <Select 
+                                                v-model="selectedCurrency" 
+                                                :options="currencyOptions" 
+                                                optionLabel="label"
+                                                placeholder="Select currency"
+                                                class="w-full"
+                                            />
+                                        </div>
+                                        <Button 
+                                            label="Update" 
+                                            icon="pi pi-check"
+                                            @click="updateCurrency"
+                                            outlined
+                                        />
+                                    </div>
+                                    <p class="text-xs text-surface-500 mt-2">
+                                        Current: {{ settings.currencySymbol }} ({{ settings.currency }})
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Data Management Section -->
                     <div>
                         <h3 class="text-lg font-semibold text-surface-900 dark:text-surface-0 mb-4 flex items-center gap-2">
