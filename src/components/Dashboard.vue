@@ -141,7 +141,7 @@ async function exportGrid() {
         console.log('Starting dom-to-image export...');
         
         // Use dom-to-image-more which supports modern CSS better
-        const blob = await domtoimage.toBlob(dashboardRef.value, {
+        const dataUrl = await domtoimage.toPng(dashboardRef.value, {
             quality: 1,
             bgcolor: '#ffffff',
             width: dashboardRef.value.offsetWidth,
@@ -149,9 +149,10 @@ async function exportGrid() {
             style: {
                 transform: 'scale(1)',
                 transformOrigin: 'top left',
-                // Remove any borders that might appear
-                outline: 'none',
-                border: 'none'
+                // Aggressive reset to avoid ghost borders
+                outline: '0 none !important',
+                border: 'none !important',
+                boxShadow: 'none !important'
             },
             filter: (node: HTMLElement) => {
                 // Remove export button and action buttons from capture
@@ -161,30 +162,19 @@ async function exportGrid() {
                 )) {
                     return false;
                 }
-                
-                // Remove borders from all elements during export
-                if (node.style) {
-                    node.style.outline = 'none';
-                    node.style.boxShadow = node.style.boxShadow; // Keep shadows
-                }
-                
                 return true;
             }
         });
         
-        console.log('Blob created:', blob);
+        console.log('Data URL created');
         
-        const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         const filename = `recur-expenses-${new Date().toISOString().split('T')[0]}.png`;
         link.download = filename;
-        link.href = url;
+        link.href = dataUrl;
         
         console.log('Triggering download:', filename);
         link.click();
-        
-        // Clean up
-        setTimeout(() => URL.revokeObjectURL(url), 100);
         
         console.log('Export successful');
     } catch (error) {
@@ -321,7 +311,7 @@ async function exportGrid() {
         </div>
 
         <!-- Export Button -->
-        <div v-if="store.expenses.length > 0" class="export-button-container flex justify-center mt-6">
+        <!-- <div v-if="store.expenses.length > 0" class="export-button-container flex justify-center mt-6">
             <Button 
                 :label="t('dashboard.exportImage')" 
                 icon="pi pi-image" 
@@ -330,6 +320,6 @@ async function exportGrid() {
                 :loading="isExporting"
                 @click="exportGrid"
             />
-        </div>
+        </div> -->
     </div>
 </template>
