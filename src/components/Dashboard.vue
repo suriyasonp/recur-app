@@ -111,19 +111,26 @@ function getYearlyEquivalent(amount: number, frequency: string): number {
                 You're spending <span class="font-bold text-primary-600">{{ settings.currencySymbol }}{{ grandTotal.toLocaleString() }}</span>/year on {{ store.expenses.length }} expenses
             </p>
             <div class="flex gap-3 justify-center">
-                <Button 
+                <!-- <Button 
                     label="Add Expense" 
                     icon="pi pi-plus" 
                     size="large"
                     @click="router.push('/expenses')"
                     raised
+                /> -->
+                <Button 
+                    label="Quick Add Expense" 
+                    icon="pi pi-bolt" 
+                    size="large"
+                    raised
+                    @click="router.push('/browse')"
                 />
                 <Button 
-                    label="Browse Subscriptions" 
-                    icon="pi pi-th-large" 
+                    label="View Expenses" 
+                    icon="pi pi-list" 
                     size="large"
                     outlined
-                    @click="router.push('/browse')"
+                    @click="router.push('/expenses')"
                 />
             </div>
         </div>
@@ -189,7 +196,7 @@ function getYearlyEquivalent(amount: number, frequency: string): number {
                 <p class="text-surface-500 dark:text-surface-400 mb-6">Start tracking your recurring expenses</p>
                 <div class="flex gap-3">
                     <Button label="Add Expense" icon="pi pi-plus" @click="router.push('/expenses')" />
-                    <Button label="Browse Subscriptions" icon="pi pi-th-large" outlined @click="router.push('/browse')" />
+                    <Button label="Quick Add Expense" icon="pi pi-bolt" outlined @click="router.push('/browse')" />
                 </div>
             </div>
         </div>

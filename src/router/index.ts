@@ -21,6 +21,11 @@ const router = createRouter({
                     component: () => import('../views/ExpensesView.vue') // Lazy load
                 },
                 {
+                    path: '/browse',
+                    name: 'browse',
+                    component: () => import('../views/BrowseSubscriptionsView.vue')
+                },
+                {
                     path: '/settings',
                     name: 'settings',
                     component: () => import('../views/SettingsView.vue')
