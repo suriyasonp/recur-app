@@ -13,6 +13,8 @@ import DatePicker from 'primevue/datepicker';
 import InputText from 'primevue/inputtext';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
 
 const { t } = useI18n();
 const store = useExpenseStore();
@@ -133,16 +135,16 @@ const dateValue = computed({
         <!-- Search and Filter -->
         <Card class="mb-6">
             <template #content>
-                <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex flex-col md:flex-row gap-4 items-center">
                     <div class="flex-1">
-                        <span class="p-input-icon-left w-full">
-                            <i class="pi pi-search" />
+                        <IconField>
+                            <InputIcon class="pi pi-search" />
                             <InputText 
                                 v-model="searchQuery" 
                                 :placeholder="t('browse.searchPlaceholder')" 
                                 class="w-full"
                             />
-                        </span>
+                        </IconField>
                     </div>
                     <div class="w-full md:w-64">
                         <Select 

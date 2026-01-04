@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useExpenseStore } from '../stores/expense';
 import { useSettingsStore } from '../stores/settings';
 import Button from 'primevue/button';
 import { useRouter } from 'vue-router';
-import * as domtoimage from 'dom-to-image-more';
+// import * as domtoimage from 'dom-to-image-more';
 
 const { t } = useI18n();
 const store = useExpenseStore();
 const settings = useSettingsStore();
 const router = useRouter();
 
-const dashboardRef = ref<HTMLElement | null>(null);
-const isExporting = ref(false);
+// const dashboardRef = ref<HTMLElement | null>(null);
+// const isExporting = ref(false);
 
 
 
@@ -121,73 +121,74 @@ function getCardSize(expense: any): string {
 }
 
 // Export grid as image
-async function exportGrid() {
-    console.log('Export button clicked');
+// async function exportGrid() {
+//     console.log('Export button clicked');
     
-    if (!dashboardRef.value) {
-        console.error('Dashboard ref is null');
-        alert('Cannot export: Dashboard not found');
-        return;
-    }
+//     if (!dashboardRef.value) {
+//         console.error('Dashboard ref is null');
+//         alert('Cannot export: Dashboard not found');
+//         return;
+//     }
     
-    if (isExporting.value) {
-        console.log('Already exporting, skipping');
-        return;
-    }
+//     if (isExporting.value) {
+//         console.log('Already exporting, skipping');
+//         return;
+//     }
     
-    isExporting.value = true;
+//     isExporting.value = true;
     
-    try {
-        console.log('Starting dom-to-image export...');
+//     try {
+//         console.log('Starting dom-to-image export...');
         
-        // Use dom-to-image-more which supports modern CSS better
-        const dataUrl = await domtoimage.toPng(dashboardRef.value, {
-            quality: 1,
-            bgcolor: '#ffffff',
-            width: dashboardRef.value.offsetWidth,
-            height: dashboardRef.value.offsetHeight,
-            style: {
-                transform: 'scale(1)',
-                transformOrigin: 'top left',
-                // Aggressive reset to avoid ghost borders
-                outline: '0 none !important',
-                border: 'none !important',
-                boxShadow: 'none !important'
-            },
-            filter: (node: HTMLElement) => {
-                // Remove export button and action buttons from capture
-                if (node.classList && (
-                    node.classList.contains('export-button-container') ||
-                    node.classList.contains('hide-on-export')
-                )) {
-                    return false;
-                }
-                return true;
-            }
-        });
+//         // Use dom-to-image-more which supports modern CSS better
+//         // @ts-ignore
+//         const dataUrl = await domtoimage.toPng(dashboardRef.value, {
+//             quality: 1,
+//             bgcolor: '#ffffff',
+//             width: dashboardRef.value.offsetWidth,
+//             height: dashboardRef.value.offsetHeight,
+//             style: {
+//                 transform: 'scale(1)',
+//                 transformOrigin: 'top left',
+//                 // Aggressive reset to avoid ghost borders
+//                 outline: '0 none !important',
+//                 border: 'none !important',
+//                 boxShadow: 'none !important'
+//             },
+//             filter: (node: HTMLElement) => {
+//                 // Remove export button and action buttons from capture
+//                 if (node.classList && (
+//                     node.classList.contains('export-button-container') ||
+//                     node.classList.contains('hide-on-export')
+//                 )) {
+//                     return false;
+//                 }
+//                 return true;
+//             }
+//         });
         
-        console.log('Data URL created');
+//         console.log('Data URL created');
         
-        const link = document.createElement('a');
-        const filename = `recur-expenses-${new Date().toISOString().split('T')[0]}.png`;
-        link.download = filename;
-        link.href = dataUrl;
+//         const link = document.createElement('a');
+//         const filename = `recur-expenses-${new Date().toISOString().split('T')[0]}.png`;
+//         link.download = filename;
+//         link.href = dataUrl;
         
-        console.log('Triggering download:', filename);
-        link.click();
+//         console.log('Triggering download:', filename);
+//         link.click();
         
-        console.log('Export successful');
-    } catch (error) {
-        console.error('Export failed:', error);
-        alert('Failed to export image. Please try again or check the console for details.');
-    } finally {
-        isExporting.value = false;
-    }
-}
+//         console.log('Export successful');
+//     } catch (error) {
+//         console.error('Export failed:', error);
+//         alert('Failed to export image. Please try again or check the console for details.');
+//     } finally {
+//         isExporting.value = false;
+//     }
+// }
 </script>
 
 <template>
-    <div ref="dashboardRef" class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto">
         <!-- Hero Section -->
         <div class="text-center mb-12">
             <h1 class="text-5xl font-bold text-surface-400 mb-3">
