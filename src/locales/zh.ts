@@ -35,6 +35,7 @@ export default {
         noExpensesYet: '还没有支出',
         startTracking: '开始跟踪您的定期支出',
         addExpense: '添加支出',
+        exportImage: '导出为图片',
     },
     browse: {
         title: '浏览订阅服务',

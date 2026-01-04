@@ -35,6 +35,7 @@ export default {
         noExpensesYet: 'Noch keine Ausgaben',
         startTracking: 'Beginnen Sie mit der Verfolgung Ihrer wiederkehrenden Ausgaben',
         addExpense: 'Ausgabe hinzufügen',
+        exportImage: 'Als Bild exportieren',
     },
     browse: {
         title: 'Abonnements durchsuchen',

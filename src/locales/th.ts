@@ -35,6 +35,7 @@ export default {
         noExpensesYet: 'ยังไม่มีรายจ่าย',
         startTracking: 'เริ่มติดตามค่าใช้จ่ายประจำของคุณ',
         addExpense: 'เพิ่มรายจ่าย',
+        exportImage: 'ส่งออกเป็นรูปภาพ',
     },
     browse: {
         title: 'เรียกดูบริการสมาชิก',

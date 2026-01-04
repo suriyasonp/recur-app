@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useExpenseStore } from '../stores/expense';
 import { useSettingsStore } from '../stores/settings';
 import Button from 'primevue/button';
 import { useRouter } from 'vue-router';
+import * as domtoimage from 'dom-to-image-more';
 
 const { t } = useI18n();
 const store = useExpenseStore();
 const settings = useSettingsStore();
 const router = useRouter();
+
+const gridRef = ref<HTMLElement | null>(null);
+const isExporting = ref(false);
 
 
 
@@ -98,6 +102,78 @@ function getYearlyEquivalent(amount: number, frequency: string): number {
         default: return amount;
     }
 }
+
+// Calculate card size based on expense amount (heatmap style)
+function getCardSize(expense: any): string {
+    if (store.expenses.length <= 1) return '';
+    
+    const yearlyAmount = getYearlyEquivalent(expense.amount, expense.frequency);
+    const allYearlyAmounts = store.expenses.map((e: any) => getYearlyEquivalent(e.amount, e.frequency));
+    const maxYearly = Math.max(...allYearlyAmounts);
+    
+    if (maxYearly === 0) return '';
+    
+    const ratio = yearlyAmount / maxYearly;
+    
+    if (ratio >= 0.6) return 'md:col-span-2 md:row-span-2'; // Large
+    if (ratio >= 0.3) return 'md:col-span-2';                // Medium wide
+    return '';                                               // Standard
+}
+
+// Export grid as image
+async function exportGrid() {
+    console.log('Export button clicked');
+    
+    if (!gridRef.value) {
+        console.error('Grid ref is null');
+        alert('Cannot export: Grid not found');
+        return;
+    }
+    
+    if (isExporting.value) {
+        console.log('Already exporting, skipping');
+        return;
+    }
+    
+    isExporting.value = true;
+    
+    try {
+        console.log('Starting dom-to-image export...');
+        
+        // Use dom-to-image-more which supports modern CSS better
+        const blob = await domtoimage.toBlob(gridRef.value, {
+            quality: 1,
+            bgcolor: '#ffffff',
+            width: gridRef.value.offsetWidth,
+            height: gridRef.value.offsetHeight,
+            style: {
+                transform: 'scale(1)',
+                transformOrigin: 'top left'
+            }
+        });
+        
+        console.log('Blob created:', blob);
+        
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const filename = `recur-expenses-${new Date().toISOString().split('T')[0]}.png`;
+        link.download = filename;
+        link.href = url;
+        
+        console.log('Triggering download:', filename);
+        link.click();
+        
+        // Clean up
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+        
+        console.log('Export successful');
+    } catch (error) {
+        console.error('Export failed:', error);
+        alert('Failed to export image. Please try again or check the console for details.');
+    } finally {
+        isExporting.value = false;
+    }
+}
 </script>
 
 <template>
@@ -136,14 +212,15 @@ function getYearlyEquivalent(amount: number, frequency: string): number {
         </div>
 
         <!-- Expense Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div ref="gridRef" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4" style="grid-auto-flow: dense;">
             <!-- Expense Cards -->
             <div 
                 v-for="expense in store.expenses" 
                 :key="expense.id"
                 :class="[
                     getCategoryStyle(expense.category).bg,
-                    'rounded-[2rem] p-8 flex flex-col justify-between h-72 transition-all hover:scale-[1.02] hover:shadow-xl cursor-pointer'
+                    getCardSize(expense),
+                    'rounded-[2rem] p-8 flex flex-col justify-between min-h-72 transition-all hover:scale-[1.02] hover:shadow-xl cursor-pointer'
                 ]"
                 @click="router.push('/expenses')"
             >
@@ -221,6 +298,18 @@ function getYearlyEquivalent(amount: number, frequency: string): number {
                     {{ settings.currencySymbol }}{{ grandTotal.toLocaleString() }}
                 </p>
             </div>
+        </div>
+
+        <!-- Export Button -->
+        <div v-if="store.expenses.length > 0" class="flex justify-center mt-6">
+            <Button 
+                :label="t('dashboard.exportImage')" 
+                icon="pi pi-image" 
+                severity="secondary"
+                outlined
+                :loading="isExporting"
+                @click="exportGrid"
+            />
         </div>
     </div>
 </template>

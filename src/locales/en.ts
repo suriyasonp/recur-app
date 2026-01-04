@@ -35,6 +35,7 @@ export default {
         noExpensesYet: 'No expenses yet',
         startTracking: 'Start tracking your recurring expenses',
         addExpense: 'Add Expense',
+        exportImage: 'Export as Image',
     },
     browse: {
         title: 'Browse Subscriptions',
