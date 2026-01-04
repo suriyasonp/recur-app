@@ -66,7 +66,7 @@ function getFrequencySeverity(freq: string) {
                             <p class="text-sm text-surface-600 dark:text-surface-400 mt-1">{{ t('expenses.subtitle') }}</p>
                         </div>
                     </div>
-                    <Button label="New Expense" icon="pi pi-plus" @click="openNew" raised />
+                    <Button :label="t('expenses.addNew')"  icon="pi pi-plus" @click="openNew" raised />
                 </div>
             </template>
             <template #content>
@@ -125,8 +125,8 @@ function getFrequencySeverity(freq: string) {
                     <template #empty>
                         <div class="text-center py-12">
                             <i class="pi pi-inbox text-6xl text-surface-300 dark:text-surface-600 mb-4"></i>
-                            <p class="text-surface-500 dark:text-surface-400 text-lg">No expenses found.</p>
-                            <Button label="Add Your First Expense" icon="pi pi-plus" class="mt-4" @click="openNew" />
+                            <p class="text-surface-500 dark:text-surface-400 text-lg">{{ t('expenses.noExpensesFound') }}</p>
+                            <Button :label="t('expenses.addFirstExpense')" icon="pi pi-plus" class="mt-4" @click="openNew" />
                         </div>
                     </template>
                 </DataTable>

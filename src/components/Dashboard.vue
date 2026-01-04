@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useExpenseStore } from '../stores/expense';
 import { useSettingsStore } from '../stores/settings';
@@ -11,9 +11,7 @@ const store = useExpenseStore();
 const settings = useSettingsStore();
 const router = useRouter();
 
-onMounted(() => {
-    store.seedData();
-});
+
 
 // Group expenses by frequency
 const yearlyExpenses = computed(() => {
@@ -191,15 +189,15 @@ function getYearlyEquivalent(amount: number, frequency: string): number {
             <!-- Empty State -->
             <div 
                 v-if="store.expenses.length === 0"
-                class="md:col-span-2 bg-white dark:bg-surface-800 rounded-[2rem] p-12 flex flex-col items-center justify-center shadow-lg border-2 border-surface-200 dark:border-surface-700"
+                class="md:col-span-2 bg-white dark:bg-surface-200 rounded-[2rem] p-12 flex flex-col items-center justify-center shadow-lg border-2 border-surface-200 dark:border-surface-700"
             >
                 <i class="pi pi-inbox text-6xl text-surface-300 dark:text-surface-600 mb-4"></i>
                 <h3 class="text-xl font-semibold text-surface-900 dark:text-surface-0 mb-2">{{ t('dashboard.noExpensesYet') }}</h3>
                 <p class="text-surface-500 dark:text-surface-400 mb-6">{{ t('dashboard.startTracking') }}</p>
-                <div class="flex gap-3">
+                <!-- <div class="flex gap-3">
                     <Button :label="t('dashboard.addExpense')" icon="pi pi-plus" @click="router.push('/expenses')" />
                     <Button :label="t('dashboard.quickAdd')" icon="pi pi-bolt" outlined @click="router.push('/browse')" />
-                </div>
+                </div> -->
             </div>
         </div>
 
