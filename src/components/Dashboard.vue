@@ -12,7 +12,7 @@ const store = useExpenseStore();
 const settings = useSettingsStore();
 const router = useRouter();
 
-const gridRef = ref<HTMLElement | null>(null);
+const dashboardRef = ref<HTMLElement | null>(null);
 const isExporting = ref(false);
 
 
@@ -124,9 +124,9 @@ function getCardSize(expense: any): string {
 async function exportGrid() {
     console.log('Export button clicked');
     
-    if (!gridRef.value) {
-        console.error('Grid ref is null');
-        alert('Cannot export: Grid not found');
+    if (!dashboardRef.value) {
+        console.error('Dashboard ref is null');
+        alert('Cannot export: Dashboard not found');
         return;
     }
     
@@ -141,14 +141,34 @@ async function exportGrid() {
         console.log('Starting dom-to-image export...');
         
         // Use dom-to-image-more which supports modern CSS better
-        const blob = await domtoimage.toBlob(gridRef.value, {
+        const blob = await domtoimage.toBlob(dashboardRef.value, {
             quality: 1,
             bgcolor: '#ffffff',
-            width: gridRef.value.offsetWidth,
-            height: gridRef.value.offsetHeight,
+            width: dashboardRef.value.offsetWidth,
+            height: dashboardRef.value.offsetHeight,
             style: {
                 transform: 'scale(1)',
-                transformOrigin: 'top left'
+                transformOrigin: 'top left',
+                // Remove any borders that might appear
+                outline: 'none',
+                border: 'none'
+            },
+            filter: (node: HTMLElement) => {
+                // Remove export button and action buttons from capture
+                if (node.classList && (
+                    node.classList.contains('export-button-container') ||
+                    node.classList.contains('hide-on-export')
+                )) {
+                    return false;
+                }
+                
+                // Remove borders from all elements during export
+                if (node.style) {
+                    node.style.outline = 'none';
+                    node.style.boxShadow = node.style.boxShadow; // Keep shadows
+                }
+                
+                return true;
             }
         });
         
@@ -177,7 +197,7 @@ async function exportGrid() {
 </script>
 
 <template>
-    <div class="max-w-7xl mx-auto">
+    <div ref="dashboardRef" class="max-w-7xl mx-auto">
         <!-- Hero Section -->
         <div class="text-center mb-12">
             <h1 class="text-5xl font-bold text-surface-400 mb-3">
@@ -186,7 +206,7 @@ async function exportGrid() {
             <p class="text-xl text-surface-600 dark:text-surface-400 mb-8">
                 {{ t('dashboard.spending') }} <span class="font-bold text-primary-600">{{ settings.currencySymbol }}{{ grandTotal.toLocaleString() }}</span>{{ t('dashboard.perYear') }} {{ store.expenses.length }} {{ t('dashboard.expenses') }}
             </p>
-            <div class="flex gap-3 justify-center">
+            <div class="hide-on-export flex gap-3 justify-center">
                 <!-- <Button 
                     label="Add Expense" 
                     icon="pi pi-plus" 
@@ -212,7 +232,7 @@ async function exportGrid() {
         </div>
 
         <!-- Expense Grid -->
-        <div ref="gridRef" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4" style="grid-auto-flow: dense;">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4" style="grid-auto-flow: dense;">
             <!-- Expense Cards -->
             <div 
                 v-for="expense in store.expenses" 
@@ -301,7 +321,7 @@ async function exportGrid() {
         </div>
 
         <!-- Export Button -->
-        <div v-if="store.expenses.length > 0" class="flex justify-center mt-6">
+        <div v-if="store.expenses.length > 0" class="export-button-container flex justify-center mt-6">
             <Button 
                 :label="t('dashboard.exportImage')" 
                 icon="pi pi-image" 
