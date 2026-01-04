@@ -22,8 +22,6 @@ const currencyOptions = ref([
     { label: 'Chinese Yuan (¥)', value: 'CNY', symbol: '¥' },
     { label: 'Indian Rupee (₹)', value: 'INR', symbol: '₹' },
     { label: 'Singapore Dollar (S$)', value: 'SGD', symbol: 'S$' },
-    { label: 'Australian Dollar (A$)', value: 'AUD', symbol: 'A$' },
-    { label: 'Canadian Dollar (C$)', value: 'CAD', symbol: 'C$' },
 ]);
 
 const selectedCurrency = ref(currencyOptions.value.find(c => c.value === settings.currency) || currencyOptions.value[0]);
@@ -187,12 +185,12 @@ function importData(event: any) {
                     </div>
 
                     <!-- Info Section -->
-                    <div class="p-4 bg-primary-50 dark:bg-primary-900/10 border border-primary-200 dark:border-primary-800 rounded-lg">
+                    <div class="p-4 bg-primary-50 dark:bg-primary-900/10 border border-primary-800 dark:border-primary-800 rounded-lg">
                         <div class="flex gap-3">
-                            <i class="pi pi-info-circle text-primary-600 dark:text-primary-400 text-xl"></i>
+                            <i class="pi pi-info-circle text-primary-600 dark:text-primary-800 text-xl"></i>
                             <div class="flex-1">
-                                <h4 class="font-semibold text-primary-900 dark:text-primary-100 mb-1">About Data Storage</h4>
-                                <p class="text-sm text-primary-800 dark:text-primary-200">
+                                <h4 class="font-semibold text-primary-900 dark:text-primary-800 mb-1">About Data Storage</h4>
+                                <p class="text-sm text-primary-800 dark:text-primary-800">
                                     Your expense data is stored locally in your browser's localStorage. 
                                     Use the export feature regularly to create backups. 
                                     Clearing browser data will remove all expenses.
