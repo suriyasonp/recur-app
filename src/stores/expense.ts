@@ -71,17 +71,7 @@ export const useExpenseStore = defineStore('expense', () => {
             .reduce((sum: number, e: Expense) => sum + e.amount, 0);
     });
 
-    // Helper to seed data for testing
-    function seedData() {
-        if (expenses.value.length > 0) return;
-        expenses.value = [
-            { id: '1', name: 'Spotify', amount: 129, frequency: 'monthly', date: '2025-01-01', category: 'Entertainment' },
-            { id: '2', name: 'Netflix', amount: 169, frequency: 'monthly', date: '2025-01-05', category: 'Entertainment' },
-            { id: '3', name: 'Car Insurance', amount: 15000, frequency: 'yearly', date: '2025-02-20', category: 'Insurance' },
-            { id: '4', name: 'Life Insurance', amount: 25000, frequency: 'yearly', date: '2025-03-15', category: 'Insurance' },
-            { id: '5', name: 'Lunch', amount: 60, frequency: 'daily', date: '2025-01-04', category: 'Food' },
-        ];
-    }
+
 
     return {
         expenses,
@@ -90,7 +80,6 @@ export const useExpenseStore = defineStore('expense', () => {
         updateExpense,
         importData,
         exportData,
-        seedData,
         totalMonthlyRecurring,
         totalYearlyRecurring
     };

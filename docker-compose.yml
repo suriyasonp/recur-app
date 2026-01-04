@@ -1,6 +1,7 @@
 version: '3'
 services:
   recur-app:
+    container_name: expense-record-app
     build: .
     ports:
       - "8080:80"

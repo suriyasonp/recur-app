@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useExpenseStore } from '../stores/expense';
+import { useSettingsStore } from '../stores/settings';
 import type { Expense } from '../types/Expense';
 import Card from 'primevue/card';
 import DataTable from 'primevue/datatable';
@@ -11,7 +13,9 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from "primevue/useconfirm";
 import ExpenseForm from '../components/ExpenseForm.vue';
 
+const { t } = useI18n();
 const store = useExpenseStore();
+const settings = useSettingsStore();
 const confirm = useConfirm();
 
 const formVisible = ref(false);
@@ -29,8 +33,8 @@ function openEdit(expense: Expense) {
 
 function deleteItem(expense: Expense) {
     confirm.require({
-        message: 'Are you sure you want to delete ' + expense.name + '?',
-        header: 'Confirm',
+        message: t('expenses.deleteConfirm'),
+        header: t('common.delete'),
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
             store.removeExpense(expense.id);
@@ -58,11 +62,11 @@ function getFrequencySeverity(freq: string) {
                             <i class="pi pi-list text-xl"></i>
                         </div>
                         <div>
-                            <h1 class="text-2xl font-bold m-0 text-surface-900 dark:text-surface-0">All Expenses</h1>
-                            <p class="text-sm text-surface-600 dark:text-surface-400 mt-1">Manage your recurring payments</p>
+                            <h1 class="text-2xl font-bold m-0 text-surface-900 dark:text-surface-0">{{ t('expenses.title') }}</h1>
+                            <p class="text-sm text-surface-600 dark:text-surface-400 mt-1">{{ t('expenses.subtitle') }}</p>
                         </div>
                     </div>
-                    <Button label="New Expense" icon="pi pi-plus" @click="openNew" raised />
+                    <Button :label="t('expenses.addNew')"  icon="pi pi-plus" @click="openNew" raised />
                 </div>
             </template>
             <template #content>
@@ -74,28 +78,28 @@ function getFrequencySeverity(freq: string) {
                     sortField="date" 
                     :sortOrder="-1"
                 >
-                    <Column field="name" header="Name" sortable>
+                    <Column field="name" :header="t('expenses.name')" sortable>
                         <template #body="slotProps">
                             <div class="font-semibold text-surface-900 dark:text-surface-0">{{ slotProps.data.name }}</div>
                         </template>
                     </Column>
-                    <Column field="amount" header="Amount" sortable>
+                    <Column field="amount" :header="t('expenses.amount')" sortable>
                         <template #body="slotProps">
                             <span class="font-bold text-lg" :class="{
                                 'text-red-600 dark:text-red-400': slotProps.data.amount > 20000,
                                 'text-amber-600 dark:text-amber-400': slotProps.data.amount <= 20000 && slotProps.data.amount > 5000,
                                 'text-emerald-600 dark:text-emerald-400': slotProps.data.amount <= 5000
                             }">
-                                ฿{{ slotProps.data.amount.toLocaleString() }}
+                                {{ settings.currencySymbol }}{{ slotProps.data.amount.toLocaleString() }}
                             </span>
                         </template>
                     </Column>
-                    <Column field="frequency" header="Frequency" sortable>
+                    <Column field="frequency" :header="t('expenses.frequency')" sortable>
                         <template #body="slotProps">
-                            <Tag :value="slotProps.data.frequency" :severity="getFrequencySeverity(slotProps.data.frequency)" class="uppercase font-semibold" />
+                            <Tag :value="t('frequency.' + slotProps.data.frequency)" :severity="getFrequencySeverity(slotProps.data.frequency)" class="uppercase font-semibold" />
                         </template>
                     </Column>
-                    <Column field="date" header="Date / Due" sortable>
+                    <Column field="date" :header="t('expenses.date')" sortable>
                         <template #body="slotProps">
                             <div class="flex items-center gap-2">
                                 <i class="pi pi-calendar text-surface-400"></i>
@@ -103,14 +107,14 @@ function getFrequencySeverity(freq: string) {
                             </div>
                         </template>
                     </Column>
-                    <Column field="category" header="Category" sortable>
+                    <Column field="category" :header="t('expenses.category')" sortable>
                         <template #body="slotProps">
                             <span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-100 dark:bg-surface-800 text-xs font-medium text-surface-700 dark:text-surface-300">
                                 {{ slotProps.data.category }}
                             </span>
                         </template>
                     </Column>
-                    <Column :exportable="false" style="min-width: 8rem">
+                    <Column :header="t('expenses.actions')" :exportable="false" style="min-width: 8rem">
                         <template #body="slotProps">
                             <div class="flex gap-2">
                                 <Button icon="pi pi-pencil" text rounded severity="secondary" @click="openEdit(slotProps.data)" />
@@ -121,8 +125,8 @@ function getFrequencySeverity(freq: string) {
                     <template #empty>
                         <div class="text-center py-12">
                             <i class="pi pi-inbox text-6xl text-surface-300 dark:text-surface-600 mb-4"></i>
-                            <p class="text-surface-500 dark:text-surface-400 text-lg">No expenses found.</p>
-                            <Button label="Add Your First Expense" icon="pi pi-plus" class="mt-4" @click="openNew" />
+                            <p class="text-surface-500 dark:text-surface-400 text-lg">{{ t('expenses.noExpensesFound') }}</p>
+                            <Button :label="t('expenses.addFirstExpense')" icon="pi pi-plus" class="mt-4" @click="openNew" />
                         </div>
                     </template>
                 </DataTable>

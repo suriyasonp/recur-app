@@ -4,6 +4,7 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 import App from './App.vue'
 import router from './router'
+import i18n from './i18n'
 import './style.css'
 import 'primeicons/primeicons.css'
 import ConfirmationService from 'primevue/confirmationservice';
@@ -13,6 +14,7 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+app.use(i18n)
 app.use(ConfirmationService);
 app.use(ToastService);
 app.use(PrimeVue, {
